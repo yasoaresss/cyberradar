@@ -341,6 +341,33 @@
     <button class="btn-pill">Histórico</button>
     <button class="btn-pill">Relatório</button>
     <div id="clock">--:--:--</div>
+    <div class="topbar-divider"></div>
+    <button onclick="document.getElementById('login-modal').style.display='flex'" style="padding:5px 14px;border:1px solid var(--accent2);background:rgba(255,60,110,.08);color:var(--accent2);font-family:var(--font-head);font-size:12px;letter-spacing:1px;cursor:pointer;text-transform:uppercase;">⚿ LOGIN</button>
+  </div>
+</div>
+
+<!-- LOGIN MODAL -->
+<div id="login-modal" style="display:none;position:fixed;inset:0;z-index:10000;background:rgba(2,8,16,.88);align-items:center;justify-content:center;">
+  <div style="width:340px;background:#070f18;border:1px solid #1a5a8a;padding:32px 28px;position:relative;box-shadow:0 0 40px rgba(0,212,255,.12);">
+    <button onclick="document.getElementById('login-modal').style.display='none';document.getElementById('login-msg').textContent=''" style="position:absolute;top:10px;right:14px;background:none;border:none;color:#3a6a8a;font-size:18px;cursor:pointer;">✕</button>
+    <div style="text-align:center;margin-bottom:24px;">
+      <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;letter-spacing:4px;color:#00d4ff;text-shadow:0 0 16px rgba(0,212,255,.6);">CYBER<span style="color:#ff3c6e">RADAR</span> BR</div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:#3a6a8a;letter-spacing:2px;margin-top:4px;">ACESSO RESTRITO</div>
+    </div>
+    <div style="margin-bottom:14px;">
+      <label style="font-family:'Share Tech Mono',monospace;font-size:10px;color:#3a6a8a;letter-spacing:2px;text-transform:uppercase;display:block;margin-bottom:5px;">Usuário</label>
+      <input id="login-user" type="text" placeholder="usuario@email.com" style="width:100%;padding:9px 12px;background:#0a1520;border:1px solid #0f3050;color:#e8f4fd;font-family:'Share Tech Mono',monospace;font-size:13px;outline:none;" onfocus="this.style.borderColor='#00d4ff'" onblur="this.style.borderColor='#0f3050'">
+    </div>
+    <div style="margin-bottom:20px;">
+      <label style="font-family:'Share Tech Mono',monospace;font-size:10px;color:#3a6a8a;letter-spacing:2px;text-transform:uppercase;display:block;margin-bottom:5px;">Senha</label>
+      <input id="login-pass" type="password" placeholder="••••••••" style="width:100%;padding:9px 12px;background:#0a1520;border:1px solid #0f3050;color:#e8f4fd;font-family:'Share Tech Mono',monospace;font-size:13px;outline:none;" onfocus="this.style.borderColor='#00d4ff'" onblur="this.style.borderColor='#0f3050'" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button onclick="doLogin()" style="width:100%;padding:11px;background:rgba(0,212,255,.1);border:1px solid #00d4ff;color:#00d4ff;font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;letter-spacing:4px;text-transform:uppercase;cursor:pointer;">ENTRAR</button>
+    <div id="login-msg" style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#ff2244;text-align:center;margin-top:12px;min-height:16px;"></div>
+    <div style="margin-top:18px;padding-top:14px;border-top:1px solid #0f3050;font-family:'Share Tech Mono',monospace;font-size:10px;color:#3a6a8a;text-align:center;line-height:2;">
+      <span style="color:#7aaecf">admin</span> / <span style="color:#7aaecf">admin123</span> — Administrador<br>
+      <span style="color:#7aaecf">analista</span> / <span style="color:#7aaecf">analista123</span> — Analista
+    </div>
   </div>
 </div>
 
@@ -791,6 +818,44 @@ document.querySelectorAll('.btn-pill').forEach(btn => {
     btn.classList.add('active');
   });
 });
+
+// ── LOGIN MOCKUP ──
+const users = {
+  'admin':    { pass: 'admin123',    role: 'Administrador', color: '#ff3c6e' },
+  'analista': { pass: 'analista123', role: 'Analista',      color: '#00d4ff' },
+};
+
+function doLogin() {
+  const user = document.getElementById('login-user').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  const msg  = document.getElementById('login-msg');
+
+  if (!user || !pass) { msg.textContent = 'Preencha todos os campos.'; return; }
+
+  if (users[user] && users[user].pass === pass) {
+    document.getElementById('login-modal').style.display = 'none';
+    msg.textContent = '';
+    document.getElementById('login-user').value = '';
+    document.getElementById('login-pass').value = '';
+
+    // Mostra usuário logado na topbar
+    const btn = document.querySelector('[onclick*="login-modal"]');
+    btn.textContent = '⚿ ' + user.toUpperCase();
+    btn.style.color = users[user].color;
+    btn.style.borderColor = users[user].color;
+    btn.onclick = null;
+
+    // Adiciona badge de perfil
+    const badge = document.createElement('span');
+    badge.textContent = users[user].role;
+    badge.style.cssText = 'font-family:"Share Tech Mono",monospace;font-size:10px;color:#3a6a8a;letter-spacing:1px;';
+    btn.parentNode.insertBefore(badge, btn.nextSibling);
+  } else {
+    msg.textContent = 'Usuário ou senha incorretos.';
+    document.getElementById('login-pass').value = '';
+    document.getElementById('login-pass').focus();
+  }
+}
 </script>
 </body>
 </html>
